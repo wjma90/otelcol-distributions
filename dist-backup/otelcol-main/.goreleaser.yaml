@@ -4,14 +4,14 @@ project_name: opentelemetry-collector-releases
 env:
   - COSIGN_YES=true
 msi:
-  - id: otelcol-sampling
-    name: otelcol-sampling_{{ .Version }}_{{ .Os }}_{{ .MsiArch }}
+  - id: otelcol-otlp
+    name: otelcol-otlp_{{ .Version }}_{{ .Os }}_{{ .MsiArch }}
     wxs: windows-installer.wxs
     extra_files:
       - config.yaml
       - opentelemetry.ico
 builds:
-  - id: otelcol-sampling
+  - id: otelcol-otlp
     goos:
       - darwin
       - linux
@@ -39,7 +39,7 @@ builds:
       - goos: windows
         goarch: s390x
     dir: _build
-    binary: otelcol-sampling
+    binary: otelcol-otlp
     ldflags:
       - -s
       - -w
@@ -48,44 +48,44 @@ builds:
     env:
       - CGO_ENABLED=0
 archives:
-  - id: otelcol-sampling
+  - id: otelcol-otlp
     builds:
-      - otelcol-sampling
+      - otelcol-otlp
     name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
 nfpms:
-  - package_name: otelcol-sampling
+  - package_name: otelcol-otlp
     contents:
-      - src: otelcol-sampling.service
-        dst: /lib/systemd/system/otelcol-sampling.service
-      - src: otelcol-sampling.conf
-        dst: /etc/otelcol-sampling/otelcol-sampling.conf
+      - src: otelcol-otlp.service
+        dst: /lib/systemd/system/otelcol-otlp.service
+      - src: otelcol-otlp.conf
+        dst: /etc/otelcol-otlp/otelcol-otlp.conf
         type: config|noreplace
       - src: config.yaml
-        dst: /etc/otelcol-sampling/config.yaml
+        dst: /etc/otelcol-otlp/config.yaml
         type: config|noreplace
     scripts:
       preinstall: preinstall.sh
       postinstall: postinstall.sh
       preremove: preremove.sh
-    id: otelcol-sampling
+    id: otelcol-otlp
     builds:
-      - otelcol-sampling
+      - otelcol-otlp
     formats:
       - apk
       - deb
       - rpm
     maintainer: The OpenTelemetry Collector maintainers <cncf-opentelemetry-maintainers@lists.cncf.io>
-    description: OpenTelemetry Collector - otelcol-sampling
+    description: OpenTelemetry Collector - otelcol-otlp
     license: Apache 2.0
 checksum:
-  name_template: '{{ .ProjectName }}_otelcol-sampling_checksums.txt'
+  name_template: '{{ .ProjectName }}_otelcol-otlp_checksums.txt'
 dockers:
   - goos: linux
     goarch: "386"
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-386
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-386
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-386
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-386
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -102,8 +102,8 @@ dockers:
     goarch: amd64
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-amd64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-amd64
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -121,8 +121,8 @@ dockers:
     goarm: "7"
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-armv7
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-armv7
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-armv7
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-armv7
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -139,8 +139,8 @@ dockers:
     goarch: arm64
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-arm64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-arm64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-arm64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-arm64
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -157,8 +157,8 @@ dockers:
     goarch: ppc64le
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-ppc64le
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-ppc64le
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-ppc64le
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-ppc64le
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -175,8 +175,8 @@ dockers:
     goarch: s390x
     dockerfile: Dockerfile
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-s390x
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-s390x
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-s390x
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-s390x
     extra_files:
       - config.yaml
     build_flag_templates:
@@ -190,22 +190,22 @@ dockers:
       - --label=org.opencontainers.image.licenses=Apache-2.0
     use: buildx
 docker_manifests:
-  - name_template: ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}
+  - name_template: ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-386
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-amd64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-armv7
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-arm64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-ppc64le
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:{{ .Version }}-s390x
-  - name_template: ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-386
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-armv7
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-arm64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-ppc64le
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:{{ .Version }}-s390x
+  - name_template: ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest
     image_templates:
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-386
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-amd64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-armv7
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-arm64
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-ppc64le
-      - ghcr.io/jpkrohling/otelcol-distributions/opentelemetry-collector-sampling:latest-s390x
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-386
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-armv7
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-arm64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-ppc64le
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-otlp:latest-s390x
 signs:
   - cmd: cosign
     args:

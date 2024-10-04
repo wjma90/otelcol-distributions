@@ -21,7 +21,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/jpkrohling/otelcol-distributions/cmd/goreleaser/internal"
+	"github.com/wjma90/otelcol-distributions/cmd/goreleaser/internal"
 )
 
 var distFlag = flag.String("d", "", "Collector distributions to build")

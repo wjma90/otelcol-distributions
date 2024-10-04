@@ -1,6 +1,6 @@
-# OpenTelemetry Collector distributions by jpkrohling
+# OpenTelemetry Collector distributions by wjma90
 
-This repository has a personal collection of OpenTelemetry Collector distributions curated by [@jpkrohling](https://github.com/jpkrohling).
+This repository has a personal collection of OpenTelemetry Collector distributions curated by [@wjma90](https://github.com/wjma90).
 
 At every new version of the Collector, distributions are updated and published.
 

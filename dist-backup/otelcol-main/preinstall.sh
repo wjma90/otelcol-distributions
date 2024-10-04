@@ -14,7 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if command -v systemctl >/dev/null 2>&1; then
-    systemctl stop otelcol-tracing.service
-    systemctl disable otelcol-tracing.service
-fi
+getent passwd otelcol-main >/dev/null || useradd --system --user-group --no-create-home --shell /sbin/nologin otelcol-main

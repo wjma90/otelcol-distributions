@@ -15,8 +15,6 @@
 # limitations under the License.
 
 if command -v systemctl >/dev/null 2>&1; then
-    systemctl enable otelcol-tracing.service
-    if [ -f /etc/otelcol-tracing/config.yaml ]; then
-        systemctl start otelcol-tracing.service
-    fi
+    systemctl stop otelcol-main.service
+    systemctl disable otelcol-main.service
 fi

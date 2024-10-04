@@ -1,5 +1,5 @@
 dist:
-  module: github.com/jpkrohling/otelcol-distributions/otelcol-otlp
+  module: github.com/wjma90/otelcol-distributions/otelcol-main
   name: otelcol
   description: OTLP distribution of the OpenTelemetry Collector
   version: 0.110.0
