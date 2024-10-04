@@ -45,7 +45,7 @@ jobs:
 
       - uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
         with:
-          platforms: arm64,ppc64le,linux/arm/v7,s390x
+          platforms: arm64 #,ppc64le,linux/arm/v7,s390x
 
       - uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3.6.1
 
@@ -67,8 +67,9 @@ jobs:
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
           registry: ghcr.io
+          # username: ${{ secrets.DOCKER_USER }} # ${{ github.repository_owner }}
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }} # ${{ secrets.DOCKER_TOKEN }}
 
       - shell: bash
         run: |
@@ -77,13 +78,14 @@ jobs:
       - uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200 # v6.0.0
         with:
           distribution: goreleaser-pro
+          # distribution: goreleaser
           version: latest
           workdir: distributions/${{ inputs.distribution }}
-          args: release --clean --split --timeout 2h
+          args: release --clean --timeout 2h --split 
         env:
           GOOS: ${{ matrix.GOOS }}
           GOARCH: ${{ matrix.GOARCH }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
           COSIGN_YES: true
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
 
@@ -114,7 +116,7 @@ jobs:
 
       - uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3.2.0
         with:
-          platforms: arm64,ppc64le,s390x
+          platforms: arm64 #,ppc64le,s390x
 
       - uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3.6.1
 
@@ -137,7 +139,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200 # v6.0.0
         with:
@@ -146,6 +148,6 @@ jobs:
           workdir: distributions/${{ inputs.distribution }}
           args: continue --merge --timeout 2h
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
           COSIGN_YES: true
           GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}

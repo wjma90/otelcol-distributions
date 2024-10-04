@@ -1,0 +1,33 @@
+name: Continuous Integration - otelcol-main-k8s
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "distributions/otelcol-main-k8s/**"
+      - "cmd/**"
+      - ".github/**"
+      - "scripts/**"
+      - "Makefile"
+      - "go.mod"
+      - "go.sum"
+  pull_request:
+    branches: [main]
+    paths:
+      - "distributions/otelcol-main-k8s/**"
+      - "cmd/**"
+      - ".github/**"
+      - "scripts/**"
+      - "Makefile"
+      - "go.mod"
+      - "go.sum"
+
+jobs:
+  check-goreleaser:
+    name: Continuous Integration - Contrib - GoReleaser
+    uses: ./.github/workflows/base-ci-goreleaser.yaml
+    with:
+      distribution: otelcol-main-k8s
+      goos: '[ "linux", "darwin" ]'
+      goarch: '[ "amd64", "arm64" ]'
+    secrets: inherit

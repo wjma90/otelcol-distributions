@@ -1,0 +1,131 @@
+partial:
+  by: target
+project_name: opentelemetry-collector-releases
+env:
+  - COSIGN_YES=true
+builds:
+  - id: otelcol-main-k8s
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - "7"
+    ignore:
+      - goos: darwin
+        goarch: "386"
+      - goos: darwin
+        goarch: arm
+      - goos: darwin
+        goarch: s390x
+    dir: _build
+    binary: otelcol-main-k8s
+    ldflags:
+      - -s
+      - -w
+    flags:
+      - -trimpath
+    env:
+      - CGO_ENABLED=0
+archives:
+  - id: otelcol-main-k8s
+    builds:
+      - otelcol-main-k8s
+    name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+nfpms:
+  - package_name: otelcol-main-k8s
+    contents:
+      - src: otelcol-main-k8s.service
+        dst: /lib/systemd/system/otelcol-main-k8s.service
+      - src: otelcol-main-k8s.conf
+        dst: /etc/otelcol-main-k8s/otelcol-main-k8s.conf
+        type: config|noreplace
+      - src: config.yaml
+        dst: /etc/otelcol-main-k8s/config.yaml
+        type: config|noreplace
+    scripts:
+      preinstall: preinstall.sh
+      postinstall: postinstall.sh
+      preremove: preremove.sh
+    id: otelcol-main-k8s
+    builds:
+      - otelcol-main-k8s
+    formats:
+      - apk
+      - deb
+      - rpm
+    maintainer: The OpenTelemetry Collector maintainers <cncf-opentelemetry-maintainers@lists.cncf.io>
+    description: OpenTelemetry Collector - otelcol-main-k8s
+    license: Apache 2.0
+checksum:
+  name_template: '{{ .ProjectName }}_otelcol-main-k8s_checksums.txt'
+dockers:
+  - goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile
+    image_templates:
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:{{ .Version }}-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:latest-amd64
+    extra_files:
+      - config.yaml
+    build_flag_templates:
+      - --pull
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+    use: buildx
+  - goos: linux
+    goarch: arm64
+    dockerfile: Dockerfile
+    image_templates:
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:{{ .Version }}-arm64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:latest-arm64
+    extra_files:
+      - config.yaml
+    build_flag_templates:
+      - --pull
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.created={{.Date}}
+      - --label=org.opencontainers.image.name={{.ProjectName}}
+      - --label=org.opencontainers.image.revision={{.FullCommit}}
+      - --label=org.opencontainers.image.version={{.Version}}
+      - --label=org.opencontainers.image.source={{.GitURL}}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+    use: buildx
+docker_manifests:
+  - name_template: ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:{{ .Version }}
+    image_templates:
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:{{ .Version }}-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:{{ .Version }}-arm64
+  - name_template: ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:latest
+    image_templates:
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:latest-amd64
+      - ghcr.io/wjma90/otelcol-distributions/opentelemetry-collector-main-k8s:latest-arm64
+signs:
+  - cmd: cosign
+    args:
+      - sign-blob
+      - --output-signature
+      - ${artifact}.sig
+      - --output-certificate
+      - ${artifact}.pem
+      - ${artifact}
+    signature: ${artifact}.sig
+    artifacts: all
+    certificate: ${artifact}.pem
+docker_signs:
+  - args:
+      - sign
+      - ${artifact}
+    artifacts: all
+sboms:
+  - id: archive
+    artifacts: archive
+  - id: package
+    artifacts: package

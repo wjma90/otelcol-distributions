@@ -1,0 +1,16 @@
+name: Release otelcol-main-k8s
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Release otelcol-main-k8s
+    uses: ./.github/workflows/base-release.yaml
+    with:
+      distribution: otelcol-main-k8s
+      goos: '[ "linux", "darwin" ]'
+      goarch: '[ "amd64", "arm64" ]'
+    secrets: inherit
+    permissions: write-all

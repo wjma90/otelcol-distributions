@@ -1,4 +1,4 @@
-module github.com/jpkrohling/otelcol-distributions
+module github.com/wjma90/otelcol-distributions
 
 go 1.22
 

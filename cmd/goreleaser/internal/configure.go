@@ -30,8 +30,9 @@ import (
 const ArmArch = "arm"
 
 var (
-	ImagePrefixes = []string{"ghcr.io/jpkrohling/otelcol-distributions"}
-	Architectures = []string{"386", "amd64", "arm", "arm64", "ppc64le", "s390x"}
+	ImagePrefixes = []string{"ghcr.io/wjma90/otelcol-distributions"}
+	// Architectures = []string{"386", "amd64", "arm", "arm64", "ppc64le", "s390x"}
+	Architectures = []string{"amd64", "arm64"}
 	ArmVersions   = []string{"7"}
 )
 
@@ -44,7 +45,6 @@ func Generate(dist string) config.Project {
 		Env:             []string{"COSIGN_YES=true"},
 		Builds:          Builds(dist),
 		Archives:        Archives(dist),
-		MSI:             WinPackages(dist),
 		NFPMs:           Packages(dist),
 		Dockers:         DockerImages(dist),
 		DockerManifests: DockerManifests(dist),
@@ -72,16 +72,16 @@ func Build(dist string) config.Build {
 			Flags:   []string{"-trimpath"},
 			Ldflags: []string{"-s", "-w"},
 		},
-		Goos:   []string{"darwin", "linux", "windows"},
+		Goos:   []string{"darwin", "linux"}, // []string{"darwin", "linux", "windows"},
 		Goarch: Architectures,
 		Goarm:  ArmVersions,
 		Ignore: []config.IgnoredBuild{
 			{Goos: "darwin", Goarch: "386"},
 			{Goos: "darwin", Goarch: "arm"},
 			{Goos: "darwin", Goarch: "s390x"},
-			{Goos: "windows", Goarch: "arm"},
-			{Goos: "windows", Goarch: "arm64"},
-			{Goos: "windows", Goarch: "s390x"},
+			// {Goos: "windows", Goarch: "arm"},
+			// {Goos: "windows", Goarch: "arm64"},
+			// {Goos: "windows", Goarch: "s390x"},
 		},
 	}
 }
@@ -99,26 +99,6 @@ func Archive(dist string) config.Archive {
 		ID:           dist,
 		NameTemplate: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}",
 		Builds:       []string{dist},
-	}
-}
-
-func WinPackages(dist string) []config.MSI {
-	return []config.MSI{
-		WinPackage(dist),
-	}
-}
-
-// Package configures goreleaser to build a Windows MSI package.
-// https://goreleaser.com/customization/msi/
-func WinPackage(dist string) config.MSI {
-	return config.MSI{
-		ID:   dist,
-		Name: fmt.Sprintf("%s_{{ .Version }}_{{ .Os }}_{{ .MsiArch }}", dist),
-		WXS:  "windows-installer.wxs",
-		Files: []string{
-			"config.yaml",
-			"opentelemetry.ico",
-		},
 	}
 }
 
